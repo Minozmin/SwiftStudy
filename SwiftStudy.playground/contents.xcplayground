@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<playground version='6.0' target-platform='ios'>
+    <pages>
+        <page name='SimpleTypes'/>
+        <page name='ComplexTypes'/>
+        <page name='Classes'/>
+        <page name='Closures'/>
+        <page name='Functions'/>
+        <page name='Loops'/>
+        <page name='conditions'/>
+        <page name='Optionals'/>
+        <page name='Protocols'/>
+        <page name='Struct'/>
+    </pages>
+</playground>
