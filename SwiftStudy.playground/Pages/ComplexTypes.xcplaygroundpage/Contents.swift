@@ -14,6 +14,19 @@ let ringo = "Ringo Starr"
 let betales = [john, paul, george, ringo]
 betales[2]
 
+//创建数组
+var array: [String] = []
+var array1 = [String]()
+var array2: Array<String>
+
+//可以使用+运算符合并两个数组
+var songs = ["Shake it Off", "You Belong with Me", "Love Story"]
+var songs2 = ["Today was a Fairytale", "Welcome to New York", "Fifteen"]
+var both = songs + songs2
+
+//还可以使用+ =来添加和分配
+both += ["Everything has Changed"]
+
 //2.集
 /*
  集合是值的集合，就像数组一样，除了它们有两个不同之处：

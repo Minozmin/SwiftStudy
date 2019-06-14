@@ -13,6 +13,11 @@ let product = firstScore * secondScore
 let divided = firstScore / secondScore
 let remainder = firstScore % secondScore
 
+//当谈到字符串时，+会将它们连接在一起
+let name1 = "Tim McGraw"
+let name2 = "Romeo"
+let both = name1 + " and " + name2
+
 //2.运行符重载
 let meaningOfLine = 42
 let doubleMeaning = 42 + 42
@@ -30,6 +35,8 @@ let beatles = firstHalf + seconHalf
 var score = 95
 score -= 5
 
+//添加然后分配给
+//获取当前值quote，为其添加"world"，然后将结果放回去quote
 var quote = "hello "
 quote += "world"
 

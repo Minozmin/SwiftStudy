@@ -6,9 +6,15 @@ import UIKit
 //简单类型
 
 //1.变量
+//创建变量时分配值
 var str = "Hello, playground"
 str = "hehuimin"
-//Swift会为其指定类型String
+type(of: str)
+
+//使用类型注释
+//Swift字符串区分大小写
+var name: String
+name = "hehuimin"
 
 //2.字符串和整数
 //这包含一个整数，因此Swift指定类型Int- “整数”的缩写。
