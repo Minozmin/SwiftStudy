@@ -4,7 +4,7 @@ import UIKit
 
 //classes and inheritance
 
-//1.类 class
+//1.类 class -- 引用类型
 //类和结构之间的第一个区别是类永远不会带有成员初始化器。这意味着如果您的班级中有属性，则必须始终创建自己的初始值设定项。
 class Dog {
     var name: String

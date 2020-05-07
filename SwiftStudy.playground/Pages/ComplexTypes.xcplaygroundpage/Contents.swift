@@ -46,6 +46,9 @@ let colors2 = Set(["red", "green", "blue", "red", "blue"])
  3.您可以使用数字位置或命名来访问元组中的项目，但Swift不会让您读取不存在的数字或名称。
  通过将多个项放入括号来创建元组，如下所示：
  */
+let name1 = (404, "Not Found")
+name1.0
+
 var name = (first: "Taylor", last: "Swift")
 name.0
 name.last
@@ -56,6 +59,10 @@ name
 
 // error
 //name.last = 12
+
+let (firstName, secondName) = name
+firstName
+secondName
 
 //4.数组与集合与元组
 //数组，集合和元组最初看起来很相似，但它们具有不同的用途。为了帮助您了解使用哪个，这里有一些规则。
@@ -98,7 +105,7 @@ var words = Set<String>()
 var scores = Dictionary<String, Int>()
 var results1 = Array<Int>()
 
-//7.枚举
+//7.枚举 -- 值类型
 //是一种以易于使用的方式定义相关值组的方法
 enum Result {
     case success

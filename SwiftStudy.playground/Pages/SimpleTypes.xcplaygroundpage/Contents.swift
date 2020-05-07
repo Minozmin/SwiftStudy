@@ -22,8 +22,14 @@ var age = 27
 // 如果您有大数字，Swift允许您使用下划线作为千位分隔符 - 它们不会更改数字，但它们确实使它更容易阅读。例如：
 var population = 8_000_000
 
+let doubleDecimal = 125.0 // 十进制，等价于1.25e2 (1.25*10^2），0.0125 = 1.25e-2
+// 0xFp2  //十六进制，15*2的2^2
+
 //字符串和整数是不同的类型，它们不能混合。所以，虽然str改为“再见” 是安全的，但我不能把它变成38，因为那Int不是一个String。
 //str = 89
+
+// 类型转换
+let aa = name + String(age)
 
 //3.多行字符串
 //标准Swift字符串使用双引号，但您不能在其中包含换行符。
@@ -44,6 +50,9 @@ lines
 """
 print(str2)
 
+// 字符类型，需指定类型，不指定类型默认是字符串类型
+let character: Character = "d"
+
 //4.Doubles and booleans 多精度和布尔
 //“Double”是“双精度浮点数”的缩写，它是一种奇特的方式，它表示它包含小数值
 var pi = 3.14
@@ -56,9 +65,16 @@ var score = 85
 var str3 = "Your score was \(score)"
 var result = "The test results are here: \(str3)"
 
-//6.常量
-//该let关键字创建常数，这是可以设置一次，永远不会再值。例如：
+//6.常量 let
+/*
+ 1.只能赋值1次
+ 2.它的值不要求在编译时期确定，但使用之前必须赋值1次
+ 3.常量、变量在初始化之前，都不能使用的
+ */
 let taylor = "swift"
+
+let number: Int
+number = 10
 
 //7.Type annotations
 //指定数据类型  请注意，布尔值具有短类型名称Bool，与整数具有短类型名称的方式相同Int。
@@ -66,6 +82,13 @@ let album: String = "hehuimin"
 let year: Int = 2019
 let height: Double = 3.14
 let taylorRocks: Bool = true
+
+//8.标识符
+/*
+ 1.标识符（比如常量名，变量名，函数名）几乎可以使用任何字符
+ 2.标识符不能以数字开头，不能包含空白字符、制表符、箭头等特殊字符
+ */
+let 🙃 = "happy"
 
 //总结
 /*

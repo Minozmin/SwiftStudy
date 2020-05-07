@@ -7,8 +7,14 @@ import UIKit
 //元组不能循环
 
 //1.for 循环
+/*
+ 闭区间运算符：a...b a <= 取值 <= b
+ 开区间运算符：a..<b a <= 取值 < 3
+ */
 let count = 1...10
-for number in count {
+// number默认是let，如果要改变值需要加 var
+// where 符合条件执行循环，不符合则不执行；不是中断循环的条件
+for number in count where number > 4 {
     print("Number is \(number)")
 }
 
@@ -16,6 +22,36 @@ let albums = ["Red", "1989", "Reputation"]
 for album in albums {
     print("\(album) is on Apple Music")
 }
+
+for value in albums[0...2] {
+    print(value)
+}
+
+// 单侧区间：让区间朝一个方向尽可能的远
+for _ in albums[2...] {
+    // 取值2-3
+}
+
+for _ in albums[...2] {
+    // 取值0-2
+}
+
+for _ in albums[..<2] {
+    // 取值0-1
+}
+
+let _ = ...5 //无穷小-5
+
+// 字符、字符串也能用区间运算符，但是不能用在for-in中
+let stringRange = "cc"..."ff"
+stringRange.contains("dd")
+stringRange.contains("zz")
+
+// 带间隔区间值
+// trckMark的取值：从4开始，不超过11，累加2，
+for trckMark in stride(from: 4, to: 11, by: 2) {
+    print(trckMark)
+}// 4 6 8 10
 
 //如果你不使用for循环给你的常量，你应该使用下划线，以便Swift不会创建不必要的值：
 for _ in 1..<5 {

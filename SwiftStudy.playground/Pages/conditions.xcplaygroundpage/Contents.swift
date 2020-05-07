@@ -46,7 +46,8 @@ firstScore != secondScore
 firstScore > secondScore
 firstScore <= secondScore
 
-//5.条件
+//5.条件 if
+// if  判断条件必须是bool类型
 if firstScore + secondScore == 16 {
     print("true")
 }else {
@@ -74,17 +75,26 @@ if firstScore > 5 || secondScore > 5 {
 firstScore > secondScore ? true : false
 
 //8.切换语句 switch
-//default 是必需的，因为Swift确保您涵盖所有可能的情况，以免错过任何可能性
+//default 不是必需的，如果能保证所有问题都处理完，比如用枚举时;其它情况下最好加上default
+//默认可以不写break，并不会贯穿到后面的条件
 //swift只会在每个case中运行代码。如果您希望执行继续下一个案例，请使用如下fallthrough关键字
 let weather = "sunny"
 switch weather {
 case "rain":
     print("rain")
+    fallthrough
 case "snow":
     print("snow")
 case "sunny":
     print("sunny")
-    fallthrough
+    
+default:
+    print("Enjoy your day")
+}
+
+switch weather {
+case "rain", "snow":
+    print("rain")
 default:
     print("Enjoy your day")
 }
@@ -92,14 +102,47 @@ default:
 //9.范围 range operators
 //..< 半开放范围运算符，不包括最终值
 //... 闭合范围运算符，包括最终值
-let range = 5
+// 区间匹配
+let range = 10
 switch range {
 case 0..<5:
     print("0..<5")
-case 0...5:
-    print("0...5")
+case 5...8:
+    print("5...8")
 default:
     print("default")
+}
+// 元组匹配
+let point = (1, 1)
+switch point {
+case (0, 0):
+    print("0,0")
+case (_, 0):
+    print("x")
+case (0, _):
+    print("y")
+default:
+    print("other")
+}
+// 值绑定
+let point1 = (2, 0)
+switch point1 {
+case (let x, 0):
+    print(x);
+case (0, let y):
+    print(y)
+case (let x, let y):
+    print(x, y)
+}
+
+let point2 = (1, -1)
+switch point1 {
+case let(x, y) where x == y:
+    print(x);
+case let(x, y) where x == -y:
+    print(y)
+case let(x, y):
+    print(x, y)
 }
 
 //总结

@@ -4,7 +4,7 @@ import UIKit
 
 //structs, properties, and methods
 
-//1.结构体
+//1.结构体 -- 值类型
 //没有设置默认值时，调用Soprt(name: "")需要带参数
 struct Sport {
     var name: String
