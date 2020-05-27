@@ -5,6 +5,15 @@ import UIKit
 //structs, properties, and methods
 
 //1.结构体 -- 值类型
+/*
+ 1.Bool,Int,Double,String,Array,Dictionary等常见类型都是结构体
+ 2.所有的结构体都有一个编译器自动生成的初始化器(initializer)
+ 3.结构体中所有的成员叫做存储属性
+ 
+ 结构体的初始化器
+ 1.编译器会根据情况，可能会为结构体生成多个初始化器，宗旨：保证所有的成员都有初始值
+ 2.一旦在定义结构体时自定义了初始化器，编译器就不会再帮它自动生成其他初始化器
+ */
 //没有设置默认值时，调用Soprt(name: "")需要带参数
 struct Sport {
     var name: String

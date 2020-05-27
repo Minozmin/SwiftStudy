@@ -9,7 +9,7 @@ import UIKit
 //1.for 循环
 /*
  闭区间运算符：a...b a <= 取值 <= b
- 开区间运算符：a..<b a <= 取值 < 3
+ 开区间运算符：a..<b a <= 取值 < b
  */
 let count = 1...10
 // number默认是let，如果要改变值需要加 var

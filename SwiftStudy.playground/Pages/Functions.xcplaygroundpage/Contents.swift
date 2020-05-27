@@ -168,9 +168,9 @@ func sumLoad(_ v1: Int, _ v2: Int) -> Int {
     v1 + v2
 } // 参数标签不同
 
-// 肉联函数
+// 内联函数
 /*
- 哪些函数不会被肉联？
+ 哪些函数不会被内联？
  1.函数体比较长
  2.包含递归调用
  3.包含动态派发
@@ -179,7 +179,7 @@ func test() {
     print("test")
 }
 test()
-// 如果开启肉联函数，直接将print("test")放在test()处调用
+// 如果开启内联函数，直接将print("test")放在test()处调用
 
 // 函数类型
 func difference(v1: Int, v2: Int) -> Int {

@@ -114,6 +114,7 @@ enum Result {
 let result = Result.success
 
 //关联值
+// 有时将枚举的成员值跟其它类型的值关联存储在一起，会非常有用
 enum Activity {
     case bored
     case talking(topic: String)
@@ -122,8 +123,13 @@ enum Activity {
 
 let talking = Activity.talking(topic: "abcd")
 
-//原始值
+//原始值(rawValue) ：枚举成员可以使用相同类型的默认值预先关联，这个默认值叫做原始值，不会占用枚举变量的内存
 //Swift将自动为每个从0开始的数字分配，如果需要，可以为一个或多个案例分配特定值
+/*
+ 1.如果枚举的原始值类型是Int、String，swift会自动分配原始值
+ 2.Int自动从0开始
+ 3.String的默认值为case值一致
+ */
 enum Planet: Int {
     case mercury
     case venus
@@ -131,6 +137,52 @@ enum Planet: Int {
     case mars
 }
 let earth = Planet.earth.rawValue
+
+// 枚举递归：枚举类型的成员里面用到了枚举类型
+indirect enum ArithExpr {
+    case number(Int)
+    case sum(ArithExpr, ArithExpr)
+    case difference(ArithExpr, ArithExpr)
+}
+
+let five = ArithExpr.number(5)
+let four = ArithExpr.number(4)
+let two = ArithExpr.number(2)
+let sum = ArithExpr.sum(five, four)
+let difference = ArithExpr.difference(sum, two)
+
+// memorylayout
+// 可以使用memorylayout获取数据类型占用的内存大小
+/*
+ 1. 1个字节存储成员值，多个case时；如果只有一个case的时候这个1个字节来存储成员值
+ 2. N个字节存储关联值（N取占用内存最大的关联值）,任何一个case的关联值都共用这N个字节
+ */
+var age = 10
+enum Password {
+    case number(Int, Int, Int, Int) // 32
+    case other // 1
+}
+var pwd = Password.number(5, 2, 6, 4)
+
+// 小端模式：高高低低
+// 内存分配空间
+// 05 00 00 00 00 00 00 00
+// 02 00 00 00 00 00 00 00
+// 06 00 00 00 00 00 00 00
+// 04 00 00 00 00 00 00 00
+// 01
+// 00 00 00 00 00 00 00
+pwd = Password.other
+// 01 00 00 00 00 00 00 00
+// 00 00 00 00 00 00 00 00
+// 00 00 00 00 00 00 00 00
+// 00 00 00 00 00 00 00 00
+// 02
+// 00 00 00 00 00 00 00
+
+MemoryLayout<Password>.stride // 40, 分配占用的空间大小，实际上占用了33，然后要以8的倍数对齐，所以是40
+MemoryLayout<Password>.size // 33, 实际用到的空间大小
+MemoryLayout<Password>.alignment // 8, 对齐参数（单位字节）
 
 //总结
 /*
