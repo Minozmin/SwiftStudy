@@ -8,6 +8,108 @@ import UIKit
  1.运行闭包时不使用参数标签
  */
 
+// 闭包表达式
+/*
+{
+    (参数列表) -> 返回值类型 in
+     函数体代码
+}
+ */
+func sum(_ v1: Int, _ v2: Int) -> Int { v1 + v2 }
+var fn = {
+    (v1: Int, v2: Int) -> Int in
+    return v1 + v2
+}
+fn(10, 20)
+
+// 闭包表达式简单
+func exec(v1: Int, v2: Int, fn:(Int, Int) -> Int) {
+    print(fn(v1, v2))
+}
+exec(v1: 10, v2: 20, fn: {
+    (v1: Int, v2: Int) -> Int in
+    return v1 + v2
+})
+exec(v1: 10, v2: 20, fn: {
+    v1, v2 in return v1 + v2
+})
+exec(v1: 10, v2: 20, fn: {
+    v1, v2 in v1 + v2
+})
+exec(v1: 10, v2: 20, fn: { $0 + $1})
+exec(v1: 10, v2: 20, fn: +)
+
+// 尾随闭包
+/*
+ 1.如果将一个很长的闭包表达式作为函数的最后一个实参，使用尾随闭包可以增强函数的可读性
+ 2.尾随闭包是一个被书写在函数调用括号外面（后面）的闭包表达式
+ 3.如果闭包表达式是函数的唯一实参，而且使用了尾随闭包的语法，那就不需要在函数后边写圆括号
+ */
+exec(v1: 10, v2: 10) { (v1, v2) -> Int in
+    return v1 + v2
+}
+
+func exec1(fn: (Int, Int) -> Int) {
+    print(fn(1, 2))
+}
+exec1(fn: { $0 + $1 })
+exec1() { $0 + $1 }
+exec1 { $0 + $1 }
+
+// 忽略参数
+exec1 { _, _ in 10 }
+
+//var fn1 = { $0 + $1 } 会报错
+var fn1: (Int, Int) -> Int = { $0 + $1 } // 指定类型就不会报错了
+
+// 数组排序
+var arraySort = [10, 3, 2, 49, 39];
+arraySort.sort() // 从小到大
+arraySort.sort { $0 > $1 } // 从大到小
+print(arraySort)
+
+// 闭包
+/*
+ 一个函数和它所捕获的变量、常量环境组合起来，称为闭包
+ - 一般指定义在函数内部的函数
+ - 一般它捕获的是外层函数的局部变量、常量
+ */
+typealias Fn = (Int) -> Int
+func getFn() -> Fn {
+    var num = 0
+    func plus(_ i: Int) -> Int {
+        num += i
+        return num
+    }
+    return plus
+//    return {
+//        num += i
+//        return num
+//    }
+} // 返回的plus和num形成了闭包
+
+var fn3 = getFn()
+print(fn3(1)) // 1
+print(fn3(2)) // 3
+print(fn3(3)) // 6
+print(fn3(4)) // 10
+
+/*
+ 1.可以把闭包想像成是一个类的实例对象
+ 2.内存在堆空间
+ 3.捕获的局部变量、常量就是对象的成员（存储属性）
+ 4.组成闭包的函数就是类内部定义的方法
+ */
+class Closure {
+    var num = 0
+    func plus(_ i: Int) -> Int {
+        num += i
+        return num
+    }
+}
+var cs = Closure()
+cs.plus(1)
+
 //1.创建基本闭包
 /*
  Swift让我们像其他任何类型一样使用函数，比如字符串和整数。这意味着您可以创建一个函数并将其分配给变量，使用该变量调用该函数，甚至将该函数作为参数传递给其他函数。

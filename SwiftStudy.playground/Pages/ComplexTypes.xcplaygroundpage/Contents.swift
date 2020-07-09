@@ -5,6 +5,8 @@ import UIKit
 // arrays, dictionaries, sets, and enums
 //复杂类型
 
+
+
 //1.数组
 //它以括号开头和结尾，数组中的每个项用逗号分隔，数组位置从0开始计数
 let john = "John Lennon"
@@ -27,6 +29,8 @@ var both = songs + songs2
 //还可以使用+ =来添加和分配
 both += ["Everything has Changed"]
 
+
+
 //2.集
 /*
  集合是值的集合，就像数组一样，除了它们有两个不同之处：
@@ -37,6 +41,8 @@ both += ["Everything has Changed"]
 //它只是无序的 --Swift不保证它的顺序。因为它们是无序的，所以不能像使用数组一样使用数字位置从集合中读取值。
 let colors = Set(["red", "green", "blue"])
 let colors2 = Set(["red", "green", "blue", "red", "blue"])
+
+
 
 //3.元组
 /*
@@ -64,6 +70,8 @@ let (firstName, secondName) = name
 firstName
 secondName
 
+
+
 //4.数组与集合与元组
 //数组，集合和元组最初看起来很相似，但它们具有不同的用途。为了帮助您了解使用哪个，这里有一些规则。
 //如果您需要特定的，固定的相关值集合，其中每个项目都有精确的位置或名称，您应该使用元组：
@@ -74,6 +82,8 @@ let set = Set(["aardvark", "astronaut", "azalea"])
 
 //如果您需要可以包含重复项的值集合，或者项目的顺序很重要，则应使用数组：
 let pythons = ["Eric", "Terry", "John", "Terry"]
+
+
 
 //5.字典
 //就像数组一样，字典以括号开头和结尾，每个项用逗号分隔。但是，我们还使用冒号将要存储的值（value）与要存储它的标识符（key）分开。
@@ -88,6 +98,8 @@ height["Paul"]
 //print nil
 height["Paul", default: 0]
 //print 0
+
+
 
 //6.创建空集合
 //如果要创建一个空集合，只需写入其类型，然后打开和关闭括号。例如，我们可以创建一个空字典，其中包含键和值的字符串，如下所示：
@@ -104,6 +116,8 @@ var words = Set<String>()
 //如果需要，可以使用类似语法创建数组和字典：
 var scores = Dictionary<String, Int>()
 var results1 = Array<Int>()
+
+
 
 //7.枚举 -- 值类型
 //是一种以易于使用的方式定义相关值组的方法
@@ -129,6 +143,11 @@ let talking = Activity.talking(topic: "abcd")
  1.如果枚举的原始值类型是Int、String，swift会自动分配原始值
  2.Int自动从0开始
  3.String的默认值为case值一致
+ */
+
+/*
+ rawValue 原理：
+ -枚举原始值rawValue的本质是：只读计算属性
  */
 enum Planet: Int {
     case mercury

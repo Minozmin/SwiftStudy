@@ -78,8 +78,14 @@ struct City {
 let city = City(population: 200)
 print(city.collectTaxes())
 
-//5.mutating  只能在func前添加
-//如果要更改方法内的属性，则需要使用mutating关键字对其进行标记
+
+// 语法糖
+
+//5.mutating
+/*
+ 结构体和枚举是值类型，默认情况下，值类型的属性不能被自身的实例方法修改
+ -在func关键字前加mutating可以允许这种修改行为
+ */
 struct Person {
     var name: String
     
@@ -92,6 +98,87 @@ struct Person {
 var person = Person(name: "Ed")
 person.makeAnonymous()
 print(person.name)
+
+// @discardableResult
+// 在func前面加个@discardableResult，可以消除：函数调用后返回值未被使用的警告⚠️
+struct Car {
+    var count = 0
+    
+    @discardableResult
+    mutating func sum() -> Int {
+        self.count = self.count + 1
+        return self.count
+    }
+}
+var car = Car()
+car.sum()
+
+
+// 下标 subscript
+/*
+ 使用subscript可以给任意类型（枚举、结构体、类）增加下标功能
+ -subscript的语法类似于实例方法、计算属性、本质就是方法（函数）
+ 
+ subscript中定义的返回值类型决定了
+ -get方法的返回值类型
+ -set方法中newValue的类型
+ 
+ subscript可以接受多个参数并且类型类型任意
+ 
+ 下标细节：
+ subscript可以没有set方法，但必须有get方法
+ subscript如果只有get方法，可以省略get
+ 可以设置参数标签
+ 下标可以是类型方法
+ */
+class Point {
+    var x = 0.0, y = 0.0
+    subscript(index: Int) -> Double {
+        set {
+            if index == 0 {
+                x = newValue
+            } else if index == 1 {
+                y = newValue
+            }
+        }
+        get {
+            if index == 0 {
+                return x
+            } else if index == 1 {
+                return y
+            }
+            return 0
+        }
+    }
+}
+var p = Point()
+p[0] = 11.1
+p[1] = 22.2
+print(p.x)
+print(p.y)
+print(p[0])
+print(p[1])
+
+// 结构体、类作为下标返回值对比
+struct Point2 {
+    var x = 10, y = 11
+}
+
+struct PointManager {
+    var point = Point2()
+    subscript(index: Int) -> Point2 {
+        set { point = newValue }
+        get { point }
+    }
+}
+var pm = PointManager()
+/*
+ 1.如果Point2是struct的话，一定要实现set方法才可以修改point的值
+ 2.如果Point2是class的话，则set方法不需要实现就可以修改point的值
+ */
+pm[0].x = 20 // pm[0] = Point2(x: 11, y: pm[0].y)
+pm[0].y = 21 // pm[0] = Point2(x: pm[0].x, y: 22)
+
 
 //6.字符串的属性和方法
 let string = "Do or do not, there is no try."
