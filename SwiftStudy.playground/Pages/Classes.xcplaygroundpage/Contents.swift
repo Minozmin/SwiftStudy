@@ -56,21 +56,47 @@ let poppy = Dog(name: "Poppy", breed: "Poodle")
  属性观察器
  -可以在子类中为父类属性（除了只读计算属性、let属性）增加观察器
  */
-class Poodle: Dog {
-    init(name: String) {
-        super.init(name: name, breed: "Poodle")
+
+class Person {
+    func speak() {
+        print("Person speak")
+    }
+    
+    func eat() {
+        print("Person eat")
+    }
+    
+    func sleep() {
+        print("Person sleep")
+    }
+}
+// 重写
+class Student: Person {
+    override func speak() {
+        print("Student speak")
+    }
+    
+    override func eat() {
+        print("Student eat")
+    }
+    
+    func run() {
+        print("Student run")
     }
 }
 
-//3.重写 override: 子类可以用自己的实现替换父方法
-class Teddy: Dog {
-    override func makeNoise() {
-        print("makeNoise override")
-    }
-}
+// 多态
+var stu: Person
+stu = Person()
+stu.speak()
+stu.eat()
+stu.sleep()
 
-let teddy = Teddy(name: "Teddy", breed: "AA")
-teddy.makeNoise()
+stu = Student()
+stu.speak()
+stu.eat()
+stu.sleep()
+
 
 //4.final 当你将一个类声明为final时，没有其他类可以继承它
 /*
@@ -89,6 +115,93 @@ final class Fruit {
 //class Apple: Fruit {
 //
 //}
+
+
+
+// Any、AnyObject
+/*
+ swift提供了2种特殊的类型：Any、AnyObject
+ 1.Any：可以代表任意类型（枚举、结构体、类、也包括函数类型）
+ 2.AnyObject：可以代表任意类类型（在协议后面写上：AnyObject代表只能类能遵守这个协议）
+ */
+protocol Runnable: AnyObject {}
+class TestA: Runnable {
+    func run() {}
+}
+// 会报错
+//struct TestB: Runnable {}
+
+var eat: Any = 10
+eat = "eat"
+
+var data1 = Array<Any>()
+var data2 = [Int]()
+
+
+// is、as?、as!、as
+/*
+ is用来判断是否为某种类型，as用来做强制类型转换
+ */
+var sum: Any = 0
+print("sum is Int:", sum is Int)
+sum = TestA()
+(sum as? TestA)?.run()
+(sum as! TestA).run()
+sum as Any
+
+
+// X.self、X.type、AnyClass
+/*
+ X.self是一个元类型（metadata）的指针，metadata存放着哦噶相关信息
+ X.self属性X.type类型
+ */
+TestA.self
+
+var testC: TestA = TestA()
+var testCType = type(of: testC)
+print("TestA.self == testCType:", TestA.self == testCType)
+
+// 元类型应用
+// 为了确保子类有init方法，所以父类必须加required
+class Animal {
+    required init() {}
+}
+
+class Cat: Animal {}
+class Pig: Animal {}
+
+func create(_ clses: [Animal.Type]) -> [Animal] {
+    var arr = [Animal]()
+    for cls in clses {
+        arr.append(cls.init())
+    }
+    return arr
+}
+
+print(create([Cat.self, Pig.self]))
+print("class_getSuperclass(Cat.self):", class_getSuperclass(Cat.self)!)
+// class_getSuperclass(Cat.self):Animal
+print("class_getSuperclass(Animal.self):", class_getSuperclass(Animal.self)!)
+// class_getSuperclass(Animal.self):_TtCs12_SwiftObject
+// swift隐藏的基类：_TtCs12_SwiftObject
+
+
+// Self
+/*
+ 1.Self一般用作返回值类型，限定返回值跟方法调用者必须是同一类型（也可以作为参数类型）
+ 2.如果Self用在类中，要求返回时调用的初始化器是required的
+ */
+protocol Liveable {
+    func test() -> Self
+}
+
+class Hhm: Runnable {
+    required init() {}
+    func test() -> Self {
+        type(of: self).init()
+    }
+}
+
 
 /* 类和结构体的第三个区别是它们的复制方式
  1.复制结构时，原始和副本都是不同的东西，改变一个不会改变另一个。
