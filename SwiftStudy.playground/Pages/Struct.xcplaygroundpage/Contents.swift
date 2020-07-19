@@ -213,19 +213,191 @@ print(toys)
 
 //8.Initializers  初始化器
 //您不需要在初始化程序之前编写func，但是您需要确保所有属性在初始化程序结束之前都有值。
-struct User {
-    var name: String
+
+/*
+ 1.类、结构体、枚举都可以定义初始化器
+ 2.类有2种初始化器：指定初始化器（designated initializer）、便捷初始化器（convenience initializer）
+   -指定初始化器
+    init(parameters) {
+        statements
+    }
+   -便捷初始化器
+    convenience init(parameters) {
+        statements
+    }
+ 3.每个类至少有一个指定初始化器，指定初始化器是类的主要初始化器
+ 4.默认初始化器总是类的指定初始化器
+ 5.类偏向于少量指定初始化器，一个类通常只有一个指定初始化器
+ 
+ 初始化器的相互调用规则
+ 1.指定初始化器必须从它的真系父类调用指定初始化器
+ 2.便捷初始化器必须从相同的类里调用另一个初始化器
+ 3.便捷初始化器最终必须调用一个指定初始化器
+ 
+
+ 两段式初始化
+ 第1阶段：初始化所有的存储属性
+ 第2阶段：设置新的存储属性值
+ 
+ 安全检查
+ 1.指定初始化器必须保证在调用父类初始化器之前，其所在类定义的所有存储属性都要初始化完成
+ 2.指定初始化器必须先调用父类初始化器，然后才能为继承的属性设置新值
+ 3.便捷初始化器必须先调用同类中的其它初始化器，然后再为任意属性设置新值
+ 4.初始化器在第1阶段初始化完成之前，不能调用任何实例方法、不能读取任何实例属性的值，也不能引用self
+ 5.直到第1阶段结束，实例才算完全合法
+ 
+ 
+ 重写
+ 1.当重写父类的指定初始化器时，必须加上override（即使子类的实现是便捷初始化器）
+ 2.如果子类写了一个匹配父类便捷初始化器的初始化器，不用加上override
+  -因为父类的便捷初始化器永远不会通过子类直接调用，因此，严格来说，子类无法重写父类的便捷初始化器
+ 
+ 自动继承
+ 1.如果子类没有自定义任何指定初始化器，它会自动继承父类所有的指定初始化器
+ 2.如果子类提供了父类所有指定初始化器的实现（要么通过方式1继承，要么重写）
+  -子类自动继承所有的父类便捷初始化器
+ 3.就算子类添加了更多的便捷初始化器，这些规则仍然适配
+ 4.子类以便捷初始化器的形式重写父类的指定初始化器，也可以作为满足规则2的一部分
+ 
+ 
+ required
+ 1.用required修饰指定初始化器，表明其所有子类都必须实现该初始化器（通过继承或者重写实现）
+ 2.如果子类重写了required初始化器，也必须加上required，不用加override
+ 
+ 属性观察器
+ 1.父类的属性在它自己的初始化器中赋值不会触发属性观察器，但在子类的初始化器中赋值会触发属性观察器
+ 
+ */
+
+// override
+class Door {
+    var age: Int {
+        willSet {
+            print("willSet", newValue)
+        }
+        didSet {
+            print("didSet", oldValue, age)
+        }
+    }
+    var score: Int
     
-    init() {
-        name = "default name"
-        print("User: \(name)")
+    // 指定初始化器
+    init(age: Int, score: Int) {
+        self.age = age
+        self.score = score
+    }
+    
+    // 便捷初始化器
+    convenience init(age: Int) {
+        self.init(age: age, score: 10)
     }
 }
 
-//现在我们的初始化器不接受任何参数，我们需要像这样创建结构体
-var user = User()
-user.name = "update name"
-print(user.name)
+class DoorA: Door {
+    override init(age: Int, score: Int) {
+        super.init(age: age, score: score)
+        // 这里赋值会触发属性观察器
+        self.age = 10
+    }
+}
+
+var doorA = DoorA(age: 20, score: 10)
+
+// 自动继承
+class DoorB: Door {
+    
+}
+
+var doorB = DoorB(age: 10)
+
+// required
+class Test {
+    required init() {}
+    init(age: Int) {}
+}
+
+class TestA: Test {
+    init(no: Int) {
+        super.init(age: 0)
+    }
+    
+    required init() {
+        super.init()
+    }
+}
+
+var testA = TestA()
+
+// 可失败初始化器
+/*
+ 1.类、结构体、枚举都可以使用init？定义可失败初始化器
+ 2.不允许同时定义参数标签、参数个数、参数类型相同的可失败初始化器和非可失败初始化器
+ 3.可以用init!定义隐式解包的可失败初始化器
+ 4.可失败初始化器可以调用非可失败初始化器，非可失败初始化器调用可失败初始化器需要进行解包
+ 5.如果初始化器调用一个可失败初始化器导致初始化失败，那么整个初始化过程都失败，并且之后的代码都停止执行
+ 6.可以用一个非可失败初始化器重写一个可失败初始化器，但反过来不行
+ */
+class User {
+    var name: String
+//    init!(name: String) {
+    init?(name: String) {
+        if name.isEmpty {
+            return nil
+        }
+        self.name = name
+    }
+    
+    convenience init() {
+        //如果上面是init!，这里可以不用!
+//        self.init(name: "")
+        self.init(name: "")!
+    }
+}
+
+var user1 = User(name: "")
+var user2 = User(name: "Jack")
+
+// 反初始化器 deinit
+/*
+ 1.deinit叫做反初始化器，类似开c++的析构函数、oc中的dealloc方法
+  -当类的实例对象被释放内存时，就会调用实例对象的deinit方法
+ 2.deinit不接受任何参数，不能写小括号，不能自行调用
+ 3.父类的deinit能被子类继承
+ 4.子类的deinit实现执行完毕后会调用父类的deinit
+ */
+class Flow {
+    deinit {
+        print("Flow对象被销毁了")
+    }
+}
+
+
+// 可选链 Optional chaining
+/*
+ 1.如果可选项为nil，调用方法、下标、属性失败，结果为nil
+ 2.如果可选项不为nil，调用方法、下标、属性成功，结果会被包装成可选项
+ 3.如果结果本来就是可选项，不会进行再次包装
+ 4.多个?可以链接在一起
+ 5.如果链中任何一个节点是nil，那个整个链就会调用失败
+ */
+class DogA { var price = 0 }
+class DogB { var weight = 0 }
+class Dog { 
+    var dogA: DogA = DogA()
+    var dogB: DogB? = DogB()
+    func age() -> Int { 20 }
+    subscript(index: Int) -> Int { index }
+}
+
+var dog: Dog? = Dog()
+let i = dog?[0]
+if let age = dog?.age() { // ()?
+    print("age调用成功", age)
+} else {
+    print("age调用失败")
+}
+var dogA = dog?.dogA // DogA?
+var weight = dog?.dogB?.weight // DogB?
 
 //9.self
 //在内部方法中，您将获得一个名为的特殊常量self，该常量指向当前正在使用的结构的任何实例。self在创建与属性具有相同参数名称的初始值设定项时
@@ -233,6 +405,9 @@ print(user.name)
 struct People {
     var name: String
     
+    init () {
+        self.name = ""
+    }
     init(name: String) {
         self.name = name
     }
@@ -245,8 +420,8 @@ print(people.name)
 //10.懒加载lazy
 struct Family {
     var name: String
-    //在user前面加lazy，Swift将仅在User首次访问时创建结构
-    lazy var user = User()
+    //在people前面加lazy，Swift将仅在People首次访问时创建结构
+    lazy var people = People()
     
     init(name: String) {
         self.name = name
