@@ -4,6 +4,99 @@ import UIKit
 
 //protocols, extensions, and proctol extensions
 
+// 协议 protocol
+/*
+ 1.协议可以用来定义方法、属性、下标的声明，协议可以被枚举、结构体、类遵守（多个协议之间用逗号隔开）
+ 2.协议中定义方法时不能有默认参数值
+ 3.默认情况下，协议中定义的内容必须全部都实现（也有办法只实现部分，后面补充）
+ 4.协议中定义属性时必须用var关键字
+ 5.实现协议时的属性权限要不小于协议中定义的属性权限
+  -协议定义get，set，用var存储属性或get、set计算属性去实现
+  -协议定义get，用任何属性都可以实现
+ 
+ static、class
+ 为了保证通用，协议中必须用static定义类型方法、类型属性、类型下标
+ 
+ mutating
+ 只有将协议中的实例方法标记为mutating
+ -才允许结构体、枚举的具体实现修改自身内存
+ -类在实现方法时不用加mutating，枚举、结构体才需要加mutating
+ 
+ init
+ 1.协议中还可以定义初始化器init
+  -非final类实现时必须加上required
+ 2.如果从协议实现的初始化器，刚好是重写了父类的指定初始化器
+  -那么这个初始化器必须同时加required、override
+ 
+ init、init?、init!
+ 1.协议中定义的init?、init!，可以用init、init?、init!去实现
+ 2.协议中定义的init，可以用init、init!去实现
+ 
+ 协议的继承
+ 1.一个协议可以继承其它协议
+ 
+ 协议组合  必须同是遵守&
+ 1.协议组合，可以包含1个类类型（最多1个）
+ // 接收同时遵守Liveable、Runaabler协议的实例
+ fun fn(obj: Liveable & Runaable) {}
+ 
+ CaseIterable
+ 1.让枚举遵守CaseIterable协议，可以实现遍历枚举值
+ */
+protocol Drawable {
+    func draw()
+    var x: Int { get set }
+    var y: Int { get }
+    subscript(index: Int) -> Int { get set }
+}
+
+class Person: Drawable {
+    // 实现属性可以是存储属性或计算属性
+//    var x: Int = 0
+//    var y: Int = 0
+    var x: Int {
+        get { 0 }
+        set {}
+    }
+    var y: Int { 0 }
+    
+    func draw() {
+        print("person draw")
+    }
+    subscript(index: Int) -> Int {
+        set {}
+        get { index }
+    }
+}
+
+// CaseIterable
+/*
+ 让枚举遵守CaseIterable协议，可以实现遍历枚举值
+ */
+enum Season: CaseIterable {
+    case spring, summer, autumn, winter
+}
+
+let seasons = Season.allCases
+for season in seasons {
+    print(season)
+}
+
+// CustomStringConvertible
+/*
+ 遵守CustomStringConvertible协议，可以自定义实例的打印字符串
+ */
+class Tree: CustomStringConvertible {
+    var age: Int = 10
+    var description: String {
+        "age=\(age)"
+    }
+}
+
+var tree = Tree()
+print("------:", tree)
+
+
 //协议是描述必须具有的属性和方法的一种方式
 protocol Identifiable {
     var id: String { get set }
