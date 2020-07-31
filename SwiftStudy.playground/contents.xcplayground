@@ -14,5 +14,7 @@
         <page name='注释'/>
         <page name='UI'/>
         <page name='Property'/>
+        <page name='Error'/>
+        <page name='Generics'/>
     </pages>
 </playground>
