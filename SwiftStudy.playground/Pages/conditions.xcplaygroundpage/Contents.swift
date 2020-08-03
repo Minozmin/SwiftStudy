@@ -99,6 +99,31 @@ default:
     print("Enjoy your day")
 }
 
+
+var age: Int? = .none
+// 方法一
+switch age {
+case let a?:
+    // a已经进行强解包了，是Int类型
+    print("is", a)
+case nil:
+    print("is nil")
+}
+// 方法二
+switch age {
+case let .some(a):
+    print("is", a)
+case .none:
+    print("is nil")
+}
+// 方法三
+if let a = age {
+    print("is", a)
+} else {
+    print("is nil")
+}
+
+
 //9.范围 range operators
 //..< 半开放范围运算符，不包括最终值
 //... 闭合范围运算符，包括最终值
@@ -144,6 +169,144 @@ case let(x, y) where x == -y:
 case let(x, y):
     print(x, y)
 }
+
+
+// 溢出运算符
+/*
+ 1.swift的算数运算符出现溢出时会抛出运行时错误
+ 2.swift有溢出运算符（&+, &-, &*），用来支持溢出运算
+ */
+var v1 = UInt8.min // 0
+var v2 = UInt8.max // 255
+//var v3 = v1 + 1 // 会报错，因为溢出了
+var v3 = v1 &- 1 // 255
+var v4 = v2 &+ 1 // 0 溢出以后又会变回到0 255 + 1 - 256
+var v5 = v2 &* 2 // 254
+
+
+// 运算符重载（Operator Overload）
+/*
+ 类、结构体、枚举可以为现有的运算符提供自定义的实现，这个操作叫做：运算符重载
+ */
+struct Point {
+    var x = 0, y = 0
+    
+    // 建议写在对应的类型里面
+    // 中缀运算符：在两个操作数中间(默认）
+    static func +(p1: Point, p2: Point) -> Point {
+        Point(x: p1.x + p2.x, y: p1.y + p2.y)
+    }
+    
+    static func -(p1: Point, p2: Point) -> Point {
+        Point(x: p1.x - p2.x, y: p1.y - p2.y)
+    }
+    
+    // 前缀运算符
+    static prefix func -(p: Point) ->Point {
+        Point(x: -p.x, y: -p.y)
+    }
+    
+    static func +=(p1: inout Point, p2: Point) {
+        p1 = p1 + p2
+    }
+    
+    static prefix func ++(p: inout Point) -> Point {
+        p += Point(x: 1, y: 1)
+        return p
+    }
+    
+    // 后缀运算符
+    static postfix func ++(p: inout Point) -> Point {
+        let temp = p
+        p += Point(x: 1, y: 1)
+        return temp
+    }
+    
+    static func ==(p1: inout Point, p2: Point) -> Bool {
+        (p1.x == p2.x) && (p1.y == p2.y)
+    }
+}
+
+// 重载
+var p1 = Point(x: 10, y: 20)
+var p2 = Point(x: 11, y: 22)
+var p3 = p1 + p2
+
+// 结合性，先计算p1 + p2的值再 + p3
+var p4 = p1 + p2 + p3
+print("p3:", p3)
+print("p4:", p4)
+
+
+// Equatable
+/*
+ 1.要想得知2个实例是否等价，一般做法是遵守Equatable协议，重载 == 运算符
+ 2.与些同时，等价于重载了 != 运算符
+ 3.swift为以下类型提供默认的 Equatable 实现
+  -没有关联类型的枚举
+  -只拥有遵守 Equatable 协议关联类型的枚举
+  -只拥有遵守 Equatable 协议存储属性的结构体
+ 4.引用类型比较存储的地址值是否相等（是否引用着同一个对象），使用恒等运算符 ===（只适用引用类型）、!==
+ */
+class Person: Equatable {
+    var age: Int
+    init(age: Int) {
+        self.age = age
+    }
+    
+    static func == (lhs: Person, rhs: Person) -> Bool {
+        lhs.age == rhs.age
+    }
+}
+
+var per1 = Person(age: 10)
+var per2 = Person(age: 10)
+print("==:", per1 == per2)
+print("===:", per1 === per2)
+
+
+// Comparable
+/*
+ 1.要想比较2个实例的大小，一般做法是：
+  -遵守 Comparable 协议
+  -重载相应的运算符
+ */
+
+
+// 自定义运算符(Custom Operator)
+/*
+ 1.可以自定义新的运算符：在全局作用域使用operator 进行声明
+  -prefix operator 前缀运算符
+  -postfix operator 后缀运算符
+  -infix operator 中缀运算符 : 优先级组
+ 
+ Apple文档参考：
+ 文档1：https://developer.apple.com/documentation/swift/swift_standard_library/operator_declarations
+ 文档2：https://docs.swift.org/swift-book/ReferenceManual/Declarations.html
+ */
+
+infix operator +-: PlusMinusPrecedence
+precedencegroup PlusMinusPrecedence { // 优先级组
+    associativity: none  // 结合性（letf\right\none）
+    higherThan: AdditionPrecedence // 比谁的优先级高 AdditionPrecedence这个是不能乱写的，需要参数文档1
+    lowerThan: MultiplicationPrecedence // 比谁的优先级低
+    assignment: true // 代表在可选链操作中拥有跟赋值运算符一样的优先级
+}
+
+struct Animal {
+    var x = 0, y = 0
+    static func +-(_ a1: Animal, _ a2: Animal) -> Animal {
+        Animal(x: a1.x + a2.x, y: a1.y - a2.y)
+    }
+}
+
+var a1 = Animal(x: 10, y: 20)
+var a2 = Animal(x: 5, y: 15)
+var a3 = a1 +- a2
+print("a3:", a3)
+
+
+
 
 //总结
 /*

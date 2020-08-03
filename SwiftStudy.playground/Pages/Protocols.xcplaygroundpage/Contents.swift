@@ -82,19 +82,25 @@ for season in seasons {
     print(season)
 }
 
-// CustomStringConvertible
+// CustomStringConvertible、CustomDebugStringConvertible
 /*
- 遵守CustomStringConvertible协议，可以自定义实例的打印字符串
+ 1.遵守CustomStringConvertible、CustomDebugStringConvertible协议，都可以自定义实例的打印字符串
+ 2.print调用的是CustomStringConvertible协议的description
+ 3.debugPrint、po调用的是CustomDebugStringConvertible协议的debugDescription
  */
-class Tree: CustomStringConvertible {
+class Tree: CustomStringConvertible, CustomDebugStringConvertible {
     var age: Int = 10
     var description: String {
-        "age=\(age)"
+        "tree:age=\(age)"
+    }
+    var debugDescription: String {
+        "debug_tree:age=\(age)"
     }
 }
 
 var tree = Tree()
-print("------:", tree)
+print(tree) // tree:age=10
+debugPrint(tree) // debug_tree:age=10
 
 
 //协议是描述必须具有的属性和方法的一种方式
@@ -150,6 +156,91 @@ let test = Test()
 test.calculateWages()
 test.study()
 test.takeVacation(day: 8)
+
+// 扩展 Extension
+/*
+ 1.swift的扩展，有点类似于OC中的分类（Category）
+ 2.扩展可以为枚举、结构体、类、协议添加新功能
+  -可以添加方法、计算属性、下标、（便捷）初始化器、嵌套类型、协议等等
+ 
+ 3.扩展不能办到的事情
+  -不能覆盖原有的功能
+  -不能添加存储属性，不能向已有的属性添加属性观察器
+  -不能添加父类
+  -不能添加指定初始化器，不能添加反初始化器
+ */
+extension Double {
+    var km: Double { self * 1_000.0 }
+    var m: Double { self }
+    var dm: Double { self / 10.0 }
+    var cm: Double { self / 100.0 }
+    var mm: Double { self / 1_000.0 }
+}
+var d = 100.0
+print(d.km) // 100000.0
+print(d.dm) // 10.0
+
+
+// 为数组扩展
+let arr = [10, 20, 30]
+print("startIndex:", arr.startIndex) // 0
+print("endIndex:", arr.endIndex) // 3
+extension Array {
+    subscript(nullable idx: Int) -> Element? {
+        if (startIndex..<endIndex).contains(idx) {
+            return self[idx]
+        }
+        return nil
+    }
+}
+print(arr[nullable: 5] ?? 0) // 数组越界了也不会crash
+
+
+// 为协议扩展
+
+// 判断一个整数是否为奇数
+// func isOdd<T: BinaryInteger>(_ i: T) -> Bool { i % 2 != 0 }
+extension BinaryInteger {
+    func isOdd() -> Bool { self % 2 != 0 }
+}
+print(10.isOdd()) // false
+print((-3).isOdd()) // true
+
+/*
+1.扩展可以给协议提供默认实现，也间接实现可选协议的效果
+2.扩展可以给协议扩充协议中从未声明过的方法
+*/
+protocol TestProtocol {
+    func test1()
+}
+extension TestProtocol {
+    func test1() {
+        print("TestProtocol test1")
+    }
+    
+    func test2() {
+        print("TestProtocol test2")
+    }
+}
+class TestClass: TestProtocol {}
+var testCls = TestClass()
+testCls.test1() // TestProtocol test1
+testCls.test2() // TestProtocol test2
+
+class TestClass2: TestProtocol {
+    func test1() {
+        print("TestClass2 test1")
+    }
+    
+    func test2() {
+        print("TestClass2 test2")
+    }
+}
+var testCls2: TestProtocol = TestClass2()
+testCls2.test1() // TestClass2 test1
+testCls2.test2() // TestProtocol test2
+
+
 
 //扩展 extension  扩展允许您向现有类型添加方法
 extension Int {
