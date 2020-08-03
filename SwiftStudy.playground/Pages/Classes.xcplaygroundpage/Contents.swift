@@ -190,6 +190,7 @@ print("class_getSuperclass(Animal.self):", class_getSuperclass(Animal.self)!)
 /*
  1.Self一般用作返回值类型，限定返回值跟方法调用者必须是同一类型（也可以作为参数类型）
  2.如果Self用在类中，要求返回时调用的初始化器是required的
+ 3.Self代表当前类型
  */
 protocol Liveable {
     func test() -> Self

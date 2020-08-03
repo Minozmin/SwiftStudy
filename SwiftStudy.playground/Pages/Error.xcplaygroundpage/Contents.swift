@@ -134,10 +134,40 @@ func testFn() {
     defer { fn1() }
     defer { fn2() }
 }
-
 testFn()
 // 打印顺序
 // fn2
 // fn1
+
+
+// assert 断言
+/*
+ 1.很多编程语言都有断言机制：不符合指定条件就抛出运行时错误，常用于调用（Debug）阶段的条件判断
+ 2.默认情况下，Swift的断言只会在Debug模式下生效，Release模式下会忽略
+ 3.增加swift flags修改断言的默认行为
+  >-assert-config Release：强制关闭断言
+  >-assert-config Debug：强制开启断言
+ */
+func divide3(_ v1: Int, _ v2: Int) -> Int {
+    assert(v2 != 0, "除数不能为0")
+    return v1 / v2
+}
+print(divide3(10, 0))
+
+
+// fatalError
+/*
+ 1.如果遇到严重问题，希望结束程序运行时，可以直接用fatalError函数抛出错误（这是无法通过do-catch捕捉的错误）
+ 2.使用fatalError函数，就不需要现写return
+ 3.在某些不得不实现、但不希望别人调用的方法，可以考虑内部使用fatalError函数
+ */
+func test(_ num: Int) -> Int {
+    if num >= 0 {
+        return 1
+    }
+    fatalError("num 不能小于0")
+}
+
+
 
 //: [Next](@next)
