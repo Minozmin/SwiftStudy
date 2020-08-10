@@ -16,6 +16,12 @@ import UIKit
  1.通过do-catch捕捉Error
  2.不捕捉Error，在当前函数增加throws声明，Error将自动抛给上层函数
    -如果顶层函数（main函数）依然没有捕捉Error，那么程序将终止
+ 
+ do 可以单独使用
+ 局部作用或
+ do {
+   // 代码实现
+ }
  */
 
 enum SomeError: Error {
@@ -167,7 +173,5 @@ func test(_ num: Int) -> Int {
     }
     fatalError("num 不能小于0")
 }
-
-
 
 //: [Next](@next)

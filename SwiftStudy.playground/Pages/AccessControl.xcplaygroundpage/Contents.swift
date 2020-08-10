@@ -8,7 +8,7 @@ import UIKit
  // 访问控制
  1.在访问权限控制这块，Swift提供了5个不同的访问级别（以下是从高到低排列，实体指被访问级别修饰的内容，当前项目的Target称为模块））
  -open：允许在定义实体的模块、其它模块中访问，允许其它模块进行继承、重写（open只能用在类、类成员上）
-/Users/hehuimin/Documents/GitHub/SwiftStudy/SwiftStudy.playground/Pages/Protocols.xcplaygroundpage -public：允许在定义实体的模块、其它模块中访问，不允许其它模块进行继承、重写
+ -public：允许在定义实体的模块、其它模块中访问，不允许其它模块进行继承、重写
  -internal：只允许在定义实体的模块中访问，不允许在其它模块中访问
  -fileprivate：只允许在定义实体的源文件中访问
  -private：只允许在定义实体的封闭声明中访问
@@ -36,7 +36,8 @@ import UIKit
  类型的访问级别会影响成员（属性、方法、初始化器、下标）、嵌套类型的默认访问级别
   -一般情况下，类型为private或fileprivate，那么成员、嵌套类型默认也是private或fileprivate
   -一般情况下，类型为internal或public，那么成员、嵌套类型默认是internal
-  -子类重写的成员访问级别必须 >= 父类的成员访问级别
+  -子类重写的成员访问级别必须 >= 子类的访问级别，或者 >= 父类被重写成员的访问级别
+  -父类的成员不能被成员作用域外定义的子类重写
   -直接在全局作用域下定义的private等价于fileprivate
  
  // getter、setter
@@ -46,7 +47,7 @@ import UIKit
  // 初始化器
  1.如果一个public类想在别一个模块调用编译生成的默认无参初始化器，必须显示提供public的无参初始化器，
   -因为public类的默认初始化器是internal级别
- 2.required初始化器必须跟它所属类拥有相同的访问级别
+ 2.required初始化器 >= 它的默认初始化级别
  3.如果结构体有private\fileprivate的存储实例属性，那么它的成员初始化器也是private\fileprivate
   -否则默认就是internal
  
@@ -217,6 +218,8 @@ method()
  1.非逃逸闭包、逃逸闭包，一般都是当做参数传递给函数
   -非逃逸闭包：闭包调用发生在函数结束前，闭包调用在函数作用域内
   -逃逸闭包：闭包有可能在函数结束后调用，闭包调用逃离了函数的作用域，需要通过@escaping声明
+ 
+ 2.逃逸闭包不可以捕获inout参数
  */
 typealias Fn = () -> ()
 // fn是非逃逸闭包
@@ -234,5 +237,105 @@ func test7(_ fn: @escaping Fn) {
         fn()
     }
 }
+
+
+// 指针
+/*
+ swift中也有专门的指针类型，这些都被定性为"Unsafe"(不安全的)，常见的类型有以下4种类型
+ -UnsafePointer<Pointee> 类似于 const Pointee *
+ -UnsafeMutablePointer<Pointee> 类似于 Pointee *
+ -UnsafeRawPointer 类似于 const void *
+ -UnsafeMutableRawPointer 类似于 void *
+ */
+
+var num = 10
+func open1(_ ptr: UnsafePointer<Int>) {
+    print("open1:", ptr.pointee)
+}
+func open2(_ ptr: UnsafeMutablePointer<Int>) {
+    ptr.pointee = 20
+    print("open2:", ptr.pointee)
+}
+
+open1(&num) // open1: 10
+open2(&num) // open2: 20
+
+func open3(_ ptr: UnsafeRawPointer) {
+    print("open3:", ptr.load(as: Int.self))
+}
+func open4(_ ptr: UnsafeMutableRawPointer) {
+    ptr.storeBytes(of: 30, as: Int.self)
+    print("open4:", ptr.load(as: Int.self))
+    
+}
+open3(&num) // open3: 20
+open4(&num) // open4: 30
+
+// 获取指向某个变量的指针
+var ptr2 = withUnsafePointer(to: &num, { $0 })
+print(ptr2) // 0x00000001053d1c08
+print("ptr2.pointee:", ptr2.pointee) // ptr2.pointee: 30
+
+var ptr3 = withUnsafePointer(to: &num) { UnsafeRawPointer($0) }
+print("ptr3.pointee:", ptr3.load(as: Int.self)) // ptr3.pointee: 30
+
+// 获取指向堆空间实例的指针
+class Animal {
+    var age: Int
+    init(age: Int) {
+        self.age = age
+    }
+}
+var animal = Animal(age: 20)
+var ptr4 = withUnsafePointer(to: &animal) { UnsafeRawPointer($0) }
+var animalAddress = ptr4.load(as: UInt.self)
+var ptr5 = UnsafeMutableRawPointer(bitPattern: animalAddress)
+print("ptr5 address:", ptr5 ?? "没有获取到地址值")
+
+// 创建指针
+
+// 方法1
+// 创建16个字节
+var ptr6 = malloc(16)
+// 存
+ptr6?.storeBytes(of: 10, as: Int.self) // 前8个字节
+ptr6?.storeBytes(of: 20, toByteOffset: 8, as: Int.self) // 后8个字节
+// 取
+print(ptr6?.load(as: Int.self) ?? "没有取到前8个子字节")
+print(ptr6?.load(fromByteOffset: 8, as: Int.self) ?? "没有取到后8个字节")
+// 销毁
+free(ptr6)
+
+// 方法2
+var ptr7 = UnsafeMutableRawPointer.allocate(byteCount: 16, alignment: 1) // 16个字节，对齐1
+ptr7.storeBytes(of: 20, as: Int.self)
+ptr7.advanced(by: 8).storeBytes(of: 22, as: Int.self) // 地址值+8
+ptr7.deallocate()
+
+// 方法3
+var ptr8 = UnsafeMutablePointer<Int>.allocate(capacity: 2) // capacity容量：2 * 8 = 16个字节
+//ptr8.initialize(repeating: 10, count: 2) // 用连续2次初始化10
+ptr8.initialize(to: 10) // 前8个字节初始化10
+ptr8.successor().initialize(to: 20) // 后继 后8个字节初始化20
+print(ptr8.pointee) // 10
+print((ptr8 + 1).pointee) // 20  等价于ptr8.successor().pointee
+print(ptr8[0]) // 10
+print(ptr8[1]) // 20
+ptr8.deinitialize(count: 2) // initialize初始化后一定要调用反初始化deinitialize，否则会存在内存泄露
+ptr8.deallocate()
+
+
+// 指针之间的转换
+var pt1 = UnsafeMutableRawPointer.allocate(byteCount: 16, alignment: 1)
+
+// 方法1
+pt1.assumingMemoryBound(to: Int.self).pointee = 11
+(pt1 + 8).assumingMemoryBound(to: Double.self).pointee = 22.0
+
+// 方法2
+// unsafeBitCast 是忽略数据类型的强制转换，不会因为数据类型的变化而改变原来的内存数据
+print(unsafeBitCast(pt1, to: UnsafeMutablePointer<Int>.self).pointee)
+
+pt1.deallocate()
 
 //: [Next](@next)
