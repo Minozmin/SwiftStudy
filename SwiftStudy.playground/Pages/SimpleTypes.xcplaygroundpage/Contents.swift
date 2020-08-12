@@ -90,6 +90,165 @@ let taylorRocks: Bool = true
  */
 let 🙃 = "happy"
 
+
+// 字面量（Literal）
+/*
+ 常见字面量的默认类型
+ public typealias IntegerLiteralType = Int
+ public typealias FloatLiteralType = Double
+ public typealias BooleanLiteralType = Bool
+ public typealias StringLiteralType = String
+ 
+ swift自带的绝大部分类型，都支持直接通过字面量进行初始化
+ Bool, Int, Float, Double, String, Array, Dictionary, Set, Optional等
+ 
+ swif自带类型之所以能够通过字面量初始化，是因为他们遵守了对应的协议
+ Bool: ExpressibleByBooleanLiteral
+ Int: ExpressibleByIntegerLiteral
+ ...
+ */
+extension Int: ExpressibleByBooleanLiteral {
+    public init(booleanLiteral value: BooleanLiteralType) {
+        self = value ? 1 : 0
+    }
+}
+
+var num: Int = true
+print(num)
+
+
+// 通配符模式(Wildcard Pattern)
+/*
+ _ 匹配任何值
+ -? 匹配非nil值
+ */
+
+// 枚举模式
+/*
+ if case语句等价于只有1个case的switch语句
+ */
+func test () {
+    let age2 = 2
+    // 原来的写法
+    if age2 >= 0 && age2 <= 9 {
+        print("[0, 9]")
+    }
+
+    // 可以用if case 匹配
+    if case 0...9 = age2 {
+        print("[0, 9]")
+    }
+    
+    guard case 0...9 = age2 else {
+        return
+    }
+
+    print("[0, 9]")
+    
+    // 等价于以上2个方法
+    switch age2 {
+    case 0...9:
+        print("[0, 9]")
+    default:
+        break
+    }
+    
+    let ages: [Int?] = [2, 3, nil, 5]
+    for case nil in ages {
+        print("有nil值")
+        break
+    }
+    
+    let points = [(1, 0), (2, 1), (3, 0)]
+    for case let (x, 0) in points {
+        print(x) // 1 3
+    }
+}
+
+// 可选模式
+let nums: [Int?] = [nil, 2, 3, nil, 5]
+for case let num? in nums {
+    print(num) // 2 3 5
+}
+
+for num in nums {
+    if let item = num {
+        print(item)
+    }
+} // 2 3 5 等价于上面的for
+
+
+// 表达式模式
+/*
+ 可以通过重载运算符，自定义表达式模式的匹配规则
+ */
+struct Student {
+    var score = 0, name = ""
+    
+    /// pattern:  case后面的内容
+    /// value:  switch后面的内容
+    /// 返回值Bool 是固定的
+    static func ~= (pattern: Int, value: Student) -> Bool {
+        value.score >= pattern
+    }
+    
+    static func ~= (pattern: Range<Int>, value: Student) -> Bool {
+        pattern.contains(value.score)
+    }
+    
+    static func ~= (pattern: ClosedRange<Int>, value: Student) -> Bool {
+        pattern.contains(value.score)
+    }
+}
+var stu = Student(score: 20, name: "Jakc")
+switch stu {
+case 100: print(">= 100")
+case 90: print(">= 90")
+case 80..<90: print("(80, 90)")
+case 60...79: print("(60, 79)")
+case 0: print(">= 0")
+default: break
+}
+
+
+func hasPrefix(_ prefix: String) -> ((String) -> Bool) {
+//    return {
+//        (str: String -> Bool) in
+//        str.  hasPrefix(prefix)
+//    }
+    // 简写
+    { $0.hasPrefix(prefix) }
+}
+
+func hasSuffix(_ suffix: String) -> ((String) -> Bool) {
+    { $0.hasSuffix(suffix) }
+}
+
+extension String {
+    static func ~= (pattern: (String) -> Bool, value: String) -> Bool {
+        pattern(value)
+    }
+}
+
+var testStr = "123456"
+switch testStr {
+case hasPrefix("12"):
+    print("以12开头")
+case hasSuffix("56"):
+    print("以56结尾")
+default:
+    break
+}
+
+
+// 可以使用where为模式增加匹配条件
+// 可以在case, for, 关联类型, 泛型, 协议扩展等后面使用
+let ages = [10, 20, 43, 23]
+for age in ages where  age > 20 {
+    print(age)
+}
+
+
 //总结
 /*
  1.使用var和常量使用变量let。最好尽可能经常使用常量。

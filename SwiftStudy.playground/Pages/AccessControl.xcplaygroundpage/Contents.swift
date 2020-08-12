@@ -338,4 +338,8 @@ print(unsafeBitCast(pt1, to: UnsafeMutablePointer<Int>.self).pointee)
 
 pt1.deallocate()
 
+// 打印animal对象的堆空间地址值
+var pt3 = unsafeBitCast(animal, to: UnsafeRawPointer.self)
+print(pt3)
+
 //: [Next](@next)
