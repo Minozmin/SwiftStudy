@@ -17,5 +17,6 @@
         <page name='Error'/>
         <page name='Generics'/>
         <page name='AccessControl'/>
+        <page name='OCToSwift'/>
     </pages>
 </playground>
