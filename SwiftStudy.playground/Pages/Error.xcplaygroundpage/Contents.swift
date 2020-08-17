@@ -59,7 +59,8 @@ func test() {
 //    catch let error as SomeError {
 //        print("error:", error)
 //    } catch {
-//        print("其它错误")
+//        // 默认带error
+//        print("其它错误", error)
 //    }
 }
 

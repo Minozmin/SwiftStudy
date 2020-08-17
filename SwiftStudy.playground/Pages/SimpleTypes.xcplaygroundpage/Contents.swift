@@ -5,44 +5,130 @@ import UIKit
 //variables, simple data types, and string interpolation
 //简单类型
 
-//1.变量
-//创建变量时分配值
+// 常量 let
+/*
+ 1.只能赋值1次
+ 2.它的值不要求在编译时期确定，但使用之前必须赋值1次
+ 3.常量、变量在初始化之前，都不能使用的
+ */
+let taylor = "swift"
+let number: Int
+number = 10
+
+
+// 变量
 var str = "Hello, playground"
 str = "hehuimin"
 type(of: str)
 
-//使用类型注释
-//Swift字符串区分大小写
-var name: String
-name = "hehuimin"
 
-//2.字符串和整数
-//这包含一个整数，因此Swift指定类型Int- “整数”的缩写。
+// 整数
 var age = 27
-// 如果您有大数字，Swift允许您使用下划线作为千位分隔符 - 它们不会更改数字，但它们确实使它更容易阅读。例如：
+
+// 千位分隔符_
 var population = 8_000_000
 
-let doubleDecimal = 125.0 // 十进制，等价于1.25e2 (1.25*10^2），0.0125 = 1.25e-2
-// 0xFp2  //十六进制，15*2的2^2
+// Double多精度
+var pi: Double = 3.14
 
-//字符串和整数是不同的类型，它们不能混合。所以，虽然str改为“再见” 是安全的，但我不能把它变成38，因为那Int不是一个String。
-//str = 89
+// Bool值，它们只包含true或false
+var awesome: Bool = true
+
+
+// 字符串 区分大小写
+let album: String = "hehuimin"
 
 // 类型转换
-let aa = name + String(age)
+let aa = album + String(age)
 
-//3.多行字符串
-//标准Swift字符串使用双引号，但您不能在其中包含换行符。
-//如果你想要多行字符串，你需要稍微不同的语法：开头和结尾有三个双引号，如下所示
+// 拼接
+var string1: String = "1"
+string1.append("_2")
+
+// 重载运算符
+string1 = string1 + "_3"
+
+// 字符串插值 \()
+string1 = "\(string1)_4"
+
+// 长度count
+print(string1.count)
+
+// 标识符
+/*
+ 1.标识符（比如常量名，变量名，函数名）几乎可以使用任何字符
+ 2.标识符不能以数字开头，不能包含空白字符、制表符、箭头等特殊字符
+ */
+let 🙃 = "happy"
+
+// 插入和删除
+var string2 = "1_2"
+// startIndex的位置是1的位置
+// endIndex的位置是在2后面
+// 插入字符
+string2.insert("_", at: string2.endIndex);
+print(string2) // 1_2_
+// 插入字符串
+string2.insert(contentsOf: "3_4", at: string2.endIndex)
+print(string2) // 1_2_3_4
+string2.insert(contentsOf: "aaa", at: string2.index(after: string2.startIndex))
+print(string2) // 1aaa_2_3_4
+string2.insert(contentsOf: "bbb", at: string2.index(before: string2.endIndex))
+print(string2) // 1aaa_2_3_bbb4
+string2.insert(contentsOf: "ccc", at: string2.index(string2.startIndex, offsetBy: 4))
+print(string2) // 1aaaccc_2_3_bbb4
+
+// 删除
+string2.remove(at: string2.startIndex)
+print(string2) // aaaccc_2_3_bbb4
+string2.remove(at: string2.firstIndex(of: "a")!)
+print(string2) // aaccc_2_3_bbb4
+// 遍历字符串所有的字符中包含c的全部删除
+string2.removeAll { $0 == "c" }
+print(string2) // aa_2_3_bbb4
+string2.removeSubrange(string2.index(string2.endIndex, offsetBy: -4)..<string2.index(before: string2.endIndex))
+print(string2) // aa_2_3_4
+
+// Substring 子串
+/*
+ 1.String可以通过下标、prefix、suffix等截取子串，子串类型不是String，而是Substring
+ 2.Substring和它的base，共享字符串数据
+ 3.Substring转为String时，会重新分配新的内存存储字符串数据
+ */
+var string3 = "1_2_3_4_5"
+var subStr1 = string3.prefix(3)
+print(subStr1) // 1_2
+var subStr2 = string3.suffix(3)
+print(subStr2) // 4_5
+var range = string3.startIndex..<string3.index(string3.startIndex, offsetBy: 3)
+// 范围 返回值是Substring类型
+var subStr3 = string3[range]
+print(subStr3) // 1_2
+// 最初的String
+print(subStr3.base) // 1_2_3_4_5
+// Substring -> String
+var newSubStr3 = String(subStr3)
+print(newSubStr3) // 1_2
+
+// String 与 Character
+// 字符类型，需指定类型，不指定类型默认是字符串类型
+let character: Character = "d"
+// 索引 返回值是Character类型
+var c = string3[string3.startIndex]
+
+// 多行字符串
+/* 保留格式：多行展示
+ 1.缩进以结尾的3引号为对齐线
+ 2.如果要显示3引号，至少要转义一个引号
+ */
 var str1 = """
-This goes
+This goes ""\"
 over multiple
 lines
 """
 print(str1)
 
-//Swift特别关注你如何编写引号：开始和结束三元组必须在它们自己的行上，但是开始和结束换行符不会包含在你的最终字符串中。
-//如果你只想要多行字符串来整齐地格式化代码，并且你不希望这些换行符实际存在于你的字符串中，那么用a结束每一行\，如下所示：
+// 加\不保留格式：一行展示
 var str2 = """
 This goes \
 over multiple \
@@ -50,45 +136,53 @@ lines
 """
 print(str2)
 
-// 字符类型，需指定类型，不指定类型默认是字符串类型
-let character: Character = "d"
 
-//4.Doubles and booleans 多精度和布尔
-//“Double”是“双精度浮点数”的缩写，它是一种奇特的方式，它表示它包含小数值
-var pi = 3.14
-//Bool值，它们只包含true或false
-var awesome = true
-
-//5.字符串插值
-//您可以在字符串中放置任何类型的变量 - 您只需要写一个反斜杠\，然后在括号中输入变量名。例如：
-var score = 85
-var str3 = "Your score was \(score)"
-var result = "The test results are here: \(str3)"
-
-//6.常量 let
+// String 相关的协议
 /*
- 1.只能赋值1次
- 2.它的值不要求在编译时期确定，但使用之前必须赋值1次
- 3.常量、变量在初始化之前，都不能使用的
+ BidirectionalCollection 协议包含的部分内容
+ startIndex、endIndex 属性、index方法
+ String、Array 都遵守了这个协议
+ 
+ RangeReplaceableCollection 协议包含的部分内容
+ append、insert、remove方法
+ String、Array 都遵守了这个协议
+ 
+ Dictionary、Set 也有实现上述协议中声明的一些方法，只是并没有遵守上述协议
  */
-let taylor = "swift"
 
-let number: Int
-number = 10
 
-//7.Type annotations
-//指定数据类型  请注意，布尔值具有短类型名称Bool，与整数具有短类型名称的方式相同Int。
-let album: String = "hehuimin"
-let year: Int = 2019
-let height: Double = 3.14
-let taylorRocks: Bool = true
-
-//8.标识符
+// String 与 NSString
 /*
- 1.标识符（比如常量名，变量名，函数名）几乎可以使用任何字符
- 2.标识符不能以数字开头，不能包含空白字符、制表符、箭头等特殊字符
+ 1.String 与 NSString 之间可以互相桥接转换
+  -如果你觉得String的API过于复杂难用，可以考虑将String 转为 NSString
+ 2.String 不能桥接转换成 NSMutableString
+ 3.可以直接用as 转换类型表示可以桥接
+ 
+ 比较字符串内容是否等价
+ 1.String使用 == 运算符
+ 2.NSString使用isEqual方法，也可以使用 == 运算符（本质还是调用了isEqual方法）
+ 
+ Swfit、OC桥接转换表（直接通过as转换）:
+ String <=> NSString
+ String <-  NSMutableString
+ String <=> NSArray
+ String <-  NSMutableString
+ String <=> NSDictionary
+ String <-  NSMutableDictionary
+ String <=> NSSet
+ String <-  NSMutableSet
  */
-let 🙃 = "happy"
+var str5 = "Jack"
+var str6 = "Rose"
+// 中间需要调函数转换，会消耗部分性能，可忽略不计
+var str7 = str5 as NSString
+var str8 = str6 as String
+var str9 = str7.substring(with: NSRange(location: 0, length: 2))
+print(str9) // Ja
+
+
+str5.append("_1")
+print(str5, str7) // Jack_1 Jack
 
 
 // 字面量（Literal）
