@@ -5,8 +5,6 @@ import UIKit
 // arrays, dictionaries, sets, and enums
 //复杂类型
 
-
-
 //1.数组
 //它以括号开头和结尾，数组中的每个项用逗号分隔，数组位置从0开始计数
 let john = "John Lennon"
@@ -28,6 +26,59 @@ var both = songs + songs2
 
 //还可以使用+ =来添加和分配
 both += ["Everything has Changed"]
+
+
+// Array 常见操作
+var arr = [1, 2, 3, 4]
+// 映射
+var arrMap = arr.map { $0 * 2 } // [2, 4, 6, 8]
+// 过滤
+var arrFilter = arr.filter{ $0 % 2 == 0 } // [2, 4]
+// 有关联的操作
+// 简写 arr.reduce(0) { $0 + $1 }
+// arr.reduce(0, +)
+var arrReduce = arr.reduce(0) {
+    // result 上一次遍历返回的结果（初始值是0） $0
+    // element 每次遍历到的数组元素  $1
+    (result, element) -> Int in
+    return result + element
+} // 10
+
+var arrMap1 = arr.map { Array.init(repeating: $0, count: $0) }
+print(arrMap1) // [[1], [2, 2], [3, 3, 3], [4, 4, 4, 4]]
+var arrFlatMap = arr.flatMap { Array.init(repeating: $0, count: $0) }
+print(arrFlatMap) // [1, 2, 2, 3, 3, 3, 4, 4, 4, 4]
+
+var arr1 = ["123", "test", "jack", "-30"]
+var arrMap2 = arr1.map { Int($0) } // [Optional(123), nil, nil, Optional(-30)]
+var arrCompactMap = arr1.compactMap { Int($0) } // // [123, -30]
+
+// 使用lazy优化
+let resultLazy = arr.lazy.map {
+    (i: Int) -> Int in
+    print("lazy--")
+    return i * 2
+}
+
+print("resultLazy", resultLazy[0])
+print("resultLazy", resultLazy[1])
+/*
+ lazy--
+ resultLazy 2
+ lazy--
+ resultLazy 4
+ */
+
+
+// Optional 的 map 和 flatMap
+var num1: Int? = 10
+print(num1.map({ $0 * 2 }) as Any) // Optional(20)
+
+var num2: Int? = nil
+print(num2.map({ $0 * 2 }) as Any) // nil
+
+print(num1.map({ Optional.some($0 * 2) }) as Any) // Optional(Optional(20))
+print(num1.flatMap({ Optional.some($0 * 2) }) as Any) // Optional(20)
 
 
 
@@ -223,10 +274,6 @@ func print(address o: UnsafeRawPointer ) {
     print(String(format: "%p", Int(bitPattern: o)))
 }
 
-var arr4 = [1, 2, 3]
-var arr5 = arr4
-print(arr4)
-print(arr5)
 
 
 //错误处理方式

@@ -1,6 +1,7 @@
 //: [Previous](@previous)
 
 import Foundation
+import UIKit
 
 // MARK、TODO、FIXME
 /*
@@ -178,5 +179,194 @@ var stu = Student()
  
  在方法前面加dynamic关键字，该方法调用使用runtime机制
  */
+
+
+// 只能被class继承的协议
+/*
+ :AnyObject
+ :class
+ @objc
+ 
+ 被@objc修饰的协议，还可以暴露给oc去遵守实现
+ */
+
+
+// 可选协议
+/*
+ 可以通过@objc定义可选协议，这种协议只能被class遵守
+ */
+@objc protocol Runnable {
+    @objc optional func run1()
+    
+}
+
+extension Runnable {
+    func run2() {}
+}
+
+class Dog: Runnable {}
+
+// dynamic
+/*
+ 被@objc dynamic 修饰的内容会具有动态性，比如调用方法会走runtime那一套流程
+ */
+class Animal: NSObject {
+    @objc dynamic func test1() {} // objc_msgsend
+    func test2() {} // call xxx
+}
+
+// KVC\KVO
+/*
+ Swift 支持KVC\KVO的条件：
+ 1.属性所在的类、监听器最终继承自NSObject
+ 2.用@objc dynamic 修饰对应的属性
+ 
+ block方式
+ 第一个参数需要在类名前面加\
+ */
+
+// 关联对象
+/*
+ 1.在Swift中，class依然可以使用关联对象
+ 2.默认情况下，extension不可以增加存储属性
+  -借助关联属性，可以实现类似extension为class增加存储属性的效果
+ */
+
+extension Animal {
+    private static var AGE_KEY: Void? // 占用1个字节（节省内存）
+    var age: Int {
+        get {
+            objc_getAssociatedObject(self, &Self.AGE_KEY) as? Int ?? 0
+        }
+        set {
+            // 第一个参数是对象Animal，第二个参数是age的唯一的地址值
+            objc_setAssociatedObject(self, &Self.AGE_KEY, newValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
+    }
+}
+
+
+// 资源名管理
+let img = UIImage(named: "logo")
+
+let btn = UIButton(type: .custom)
+btn.setTitle("添加", for: .normal)
+
+// 参考了Android的资源名管理方式
+enum R {
+    enum string: String {
+        case add = "添加2"
+    }
+    
+    enum image: String {
+        case logo
+    }
+}
+
+let img2 = UIImage(named: R.image.logo.rawValue)
+btn.setTitle(R.string.add.rawValue, for: .normal)
+
+// 其它思路 用enum、struct都可以
+/*
+ https://github.com/mac-cain13/R.swift
+ https://github.com/SwiftGen/SwiftGen
+ */
+enum R2 {
+    enum image {
+        static var logo = UIImage(named: "logo")
+    }
+}
+enum RImage {
+    static var logo = UIImage(named: "logo")
+}
+
+let img3 = RImage.logo
+let img4 = R2.image.logo
+
+
+// 多线程 gcd
+
+// 子线程
+DispatchQueue.global().async {
+    print(Thread.current)
+    
+    // 回到主线程
+    DispatchQueue.main.async {
+    }
+}
+
+let item = DispatchWorkItem {
+    print("1", Thread.current)
+}
+
+DispatchQueue.global().async(execute: item)
+item.notify(queue: DispatchQueue.main) {
+    // 主线程里面的任务
+}
+
+public typealias Task = () -> Void
+
+struct Asyncs {
+    // 异步任务
+    private static func _async(_ task: @escaping Task, _ mainTask: Task? = nil) {
+        let item = DispatchWorkItem(block: task)
+        DispatchQueue.global().async(execute: item)
+        if let main = mainTask {
+            item.notify(queue: DispatchQueue.main, execute: main)
+        }
+    }
+    
+    public static func async(_ task: @escaping Task) {
+        _async(task)
+    }
+    
+    public static func async(_ task: @escaping Task, _ mainTask: @escaping Task) {
+        _async(task, mainTask)
+    }
+    
+    // once
+    /*
+     1.可以用类型属性或者全局变量、常量
+     2.默认自带 lazy + dispatch_once 效果
+     */
+    
+    // 延迟
+    @discardableResult
+    public static func display(_ seconds: Double, _ block: @escaping Task) -> DispatchWorkItem {
+        let item = DispatchWorkItem(block: block)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + seconds, execute: item)
+        return item
+    }
+}
+
+Asyncs.async {
+    // 子线程
+}
+
+Asyncs.async({
+    // 子线程
+}) {
+    // 主线程
+}
+
+let item2:DispatchWorkItem? = Asyncs.display(3) {
+    // 延迟3秒在主线程执行
+}
+// 可以手动取消
+item2?.cancel()
+
+// 加锁
+// 同时有一条线程
+private var lock = DispatchSemaphore(value: 1)
+lock.wait()
+defer {
+    lock.signal()
+}
+
+private var lock2 = NSRecursiveLock() // NSLock
+lock2.lock()
+defer {
+    lock2.unlock()
+}
 
 //: [Next](@next)

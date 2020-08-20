@@ -75,6 +75,9 @@ if let unwrapped = name {
  guard语句特别适合用来"提前退出"
  
  当使用guard语句进行可选绑定时，绑定的常量、变量也能在外层作用域中作用
+ 
+ guard aa && bb  等价于
+ guard aa, bb
  */
 
 func greet(_ name: String?) {
