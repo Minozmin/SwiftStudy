@@ -18,5 +18,7 @@
         <page name='Generics'/>
         <page name='AccessControl'/>
         <page name='OCToSwift'/>
+        <page name='FP'/>
+        <page name='Arithmetic'/>
     </pages>
 </playground>

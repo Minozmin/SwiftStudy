@@ -27,6 +27,11 @@ var both = songs + songs2
 //还可以使用+ =来添加和分配
 both += ["Everything has Changed"]
 
+var arrdd = ["abc", "efgh", "ijk"]
+let addCount = arrdd.map {
+    $0.count
+}
+print(addCount)
 
 // Array 常见操作
 var arr = [1, 2, 3, 4]

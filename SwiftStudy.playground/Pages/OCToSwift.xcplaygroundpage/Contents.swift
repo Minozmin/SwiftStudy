@@ -224,6 +224,15 @@ class Animal: NSObject {
  block方式
  第一个参数需要在类名前面加\
  */
+class Test: NSObject {
+    func run() {
+        addObserver(self, forKeyPath: "age", options: [.new, .old], context: nil)
+    }
+    
+    deinit {
+        self.removeObserver(self, forKeyPath: "age")
+    }
+}
 
 // 关联对象
 /*
